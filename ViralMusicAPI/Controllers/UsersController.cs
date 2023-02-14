@@ -33,7 +33,7 @@ namespace ViralMusicAPI.Controllers
         {
             try
             {
-                return Ok(mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetUsersAsync()));
+                return Ok(mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllAsync()));
             }
             catch (Exception ex)
             {

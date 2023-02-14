@@ -1,13 +1,13 @@
-﻿using Repositories.IRepositories;
-using System;
+﻿using DataAccessObjects;
+using Repositories.IRepositories;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repositories.Repositories
 {
-    public class GenericRepository : IGenericRepository
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
+        public async Task<IEnumerable<T>> GetAllAsync()
+            => await GenericDAO<T>.Instance.GetAllAsync();
     }
 }
