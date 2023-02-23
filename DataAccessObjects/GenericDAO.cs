@@ -43,6 +43,39 @@ namespace DataAccessObjects
             return t;
         }
 
+        public async Task<T> GetByIdAsync(int id)
+        {
+            T t = null;
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    t = await dbContext.Set<T>().FindAsync(id);
+                }
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return t;
+        }
+
+        public async Task<int> CountAsync()
+        {
+            int t = 0;
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    t = await dbContext.Set<T>().CountAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return t;
+        }
+
         public async Task AddAsync(T t)
         {
             try
