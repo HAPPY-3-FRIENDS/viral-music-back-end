@@ -10,6 +10,7 @@ CREATE TABLE [User] (
     Password VARCHAR(16) NOT NULL,
     Fullname NVARCHAR(100) NULL,
     Avatar TEXT NULL,
+    RoleId INT NOT NULL
 )
 GO;
 

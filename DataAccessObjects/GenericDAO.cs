@@ -42,5 +42,53 @@ namespace DataAccessObjects
             }
             return t;
         }
+
+        public async Task AddAsync(T t)
+        {
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    dbContext.Set<T>().Add(t);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task UpdateAsync(T t)
+        {
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    dbContext.Set<T>().Update(t);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task RemoveAsync(T t)
+        {
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    dbContext.Set<T>().Remove(t);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
