@@ -16,13 +16,11 @@ namespace ViralMusicAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ViralMusicContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IMapper mapper;
 
-        public UsersController(ViralMusicContext context, IUserRepository userRepository, IMapper mapper)
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
             _userRepository = userRepository;
             this.mapper = mapper;
         }
@@ -41,46 +39,52 @@ namespace ViralMusicAPI.Controllers
             }
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        [HttpGet("count", Name = "CountUsers")]
+        public async Task<ActionResult<int>> CountUsers()
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
+            try
             {
-                return NotFound();
+                var res = await _userRepository.CountUsers();
+                return res;
             }
-
-            return user;
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User user)
-        {
-            if (id != user.Username)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(user).State = EntityState.Modified;
+        // GET: api/users/pequan
+        [HttpGet("{username}")]
+        public async Task<ActionResult<User>> GetUser(string username)
+        {
+            try
+            {
+                return Ok(mapper.Map<UserDTO>(await _userRepository.GetByUsername(username)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // PUT: api/users/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut]
+        public async Task<IActionResult> PutUser([FromBody] User user)
+        {
+            if (await UserExists(user.Username) == false)
+            {
+                return BadRequest("User doesn't exist!");
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _userRepository.UpdateAsync(user);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, ex.Message);
             }
 
             return NoContent();
@@ -89,47 +93,53 @@ namespace ViralMusicAPI.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser([FromBody] User user)
         {
-            _context.Users.Add(user);
+            if (await UserExists(user.Username) == true)
+            {
+                return BadRequest("User has existed!");
+            }
+
             try
             {
-                await _context.SaveChangesAsync();
+                user = await _userRepository.InitUser(user);
+                await _userRepository.AddAsync(user);
             }
-            catch (DbUpdateException)
+            catch (Exception ex)
             {
-                if (UserExists(user.Username))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, ex.Message);
             }
-
-            return CreatedAtAction("GetUser", new { id = user.Username }, user);
-        }
-
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UserExists(string id)
+        // DELETE: api/users/5
+        [HttpDelete("{username}")]
+        public async Task<IActionResult> DeleteUser(string username)
         {
-            return _context.Users.Any(e => e.Username == id);
+            User deleteUser = await _userRepository.GetByUsername(username);
+            if (deleteUser == null)
+            {
+                return BadRequest("User doesn't exist!");
+            }
+
+            try
+            {
+                await _userRepository.DeleteAsync(deleteUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return NoContent();
+        }
+
+        private async Task<bool> UserExists(string username)
+        {
+            if (await _userRepository.GetByUsername(username) == null)
+                return false;
+            return true;
         }
     }
 }

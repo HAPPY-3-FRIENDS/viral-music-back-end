@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BusinessObjects.DataTranferObjects;
 using BusinessObjects.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BusinessObjects.Mapper
 {
@@ -9,7 +11,8 @@ namespace BusinessObjects.Mapper
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<User, UserDTO>()
+                .ForMember(dto => dto.Role, act => act.MapFrom(obj => obj.Role.RoleName));
         }
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataAccessObjects
@@ -59,7 +61,15 @@ namespace DataAccessObjects
             return t;
         }
 
-        public async Task<int> CountAsync()
+        public async Task<int> CountAsync(Expression<Func<T, bool>> expression = null)
+        {
+            var dbContext = new ViralMusicContext();
+            IQueryable<T> query = dbContext.Set<T>();
+            if (expression != null) query = query.Where(expression);
+            return await query.CountAsync();
+        }
+
+        /*public async Task<int> CountAsync()
         {
             int t = 0;
             try
@@ -74,7 +84,7 @@ namespace DataAccessObjects
                 throw new Exception(ex.Message);
             }
             return t;
-        }
+        }*/
 
         public async Task AddAsync(T t)
         {
@@ -98,6 +108,7 @@ namespace DataAccessObjects
             {
                 using (var dbContext = new ViralMusicContext())
                 {
+                    dbContext.ChangeTracker.Clear();
                     dbContext.Set<T>().Update(t);
                     await dbContext.SaveChangesAsync();
                 }
