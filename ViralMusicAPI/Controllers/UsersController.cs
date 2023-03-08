@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BusinessObjects.Models;
 using Repositories.IRepositories;
 using AutoMapper;
 using System;
 using BusinessObjects.DataTranferObjects;
-using BusinessObjects.Mapper;
+using ViralMusicAPI.Handler;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using ViralMusicAPI.Exceptions;
 
 namespace ViralMusicAPI.Controllers
 {
+    /// <summary>
+    /// User API
+    /// </summary>
     [Route("api/users")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -25,18 +29,29 @@ namespace ViralMusicAPI.Controllers
             this.mapper = mapper;
         }
 
-        // GET: api/Users
+        /// <summary>
+        /// Get a list of all users.
+        /// </summary>
+        /// 
+        /// <returns>A list of all users.</returns>
+        /// <remarks>
+        /// Description:
+        /// - Return a list of all users.
+        /// - Sample request: GET /api/users
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="404">List of users is Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(ResponseDTO<List<UserDTO>>), StatusCodes.Status200OK)]
+        [Produces("application/json")]
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<ActionResult<ResponseDTO<List<UserDTO>>>> GetUsers()
         {
-            try
-            {
-                return Ok(mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllAsync()));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find user successfully!",
+                HttpStatusCode.OK,
+                mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllAsync())));
         }
 
         [HttpGet("count", Name = "CountUsers")]
@@ -56,16 +71,14 @@ namespace ViralMusicAPI.Controllers
 
         // GET: api/users/pequan
         [HttpGet("{username}")]
-        public async Task<ActionResult<User>> GetUser(string username)
+        public async Task<ActionResult<ResponseDTO<UserDTO>>> GetUser(string username)
         {
-            try
-            {
-                return Ok(mapper.Map<UserDTO>(await _userRepository.GetByUsername(username)));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            User user = await _userRepository.GetByUsername(username);
+            if (user == null) throw new NotFoundException("User is Not Found with username: " + username);
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find user successfully!",
+                HttpStatusCode.OK,
+                mapper.Map<UserDTO>(user)));
         }
 
         // PUT: api/users/5
