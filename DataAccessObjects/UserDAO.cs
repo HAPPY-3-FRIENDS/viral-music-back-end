@@ -1,8 +1,5 @@
-﻿using BusinessObjects.DataTranferObjects;
-using BusinessObjects.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using BusinessObjects.Models;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataAccessObjects
