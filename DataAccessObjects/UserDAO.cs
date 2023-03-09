@@ -1,5 +1,7 @@
 ﻿using BusinessObjects.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataAccessObjects
@@ -30,7 +32,7 @@ namespace DataAccessObjects
             try
             {
                 var dbContext = new ViralMusicContext();
-                user = await dbContext.Users.FindAsync(username);
+                user = await dbContext.Users.Include(u => u.Role).Where(u => u.Username.Equals(username)).FirstOrDefaultAsync();
             } catch (Exception ex)
             {
                 throw new Exception(ex.Message);
