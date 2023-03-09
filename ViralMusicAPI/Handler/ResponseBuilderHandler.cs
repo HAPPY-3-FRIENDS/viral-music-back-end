@@ -7,7 +7,7 @@ namespace ViralMusicAPI.Handler
     {
         public static ResponseDTO<T> generateResponse<T>(string message, HttpStatusCode httpStatusCode, T objectResponse) where T : class
         {
-            return new ResponseDTO<T>(message, ((int)httpStatusCode), objectResponse);
+            return new ResponseDTO<T>(message, httpStatusCode, objectResponse);
         }
     }
 }
