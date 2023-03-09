@@ -6,7 +6,7 @@ namespace BusinessObjects.Utils
     {
         public static string getTimestampNow()
         {
-            return DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+            return DateTime.Now.ToString("dd/MM/yyyy - HH:mm:ss");
         }
     }
 }

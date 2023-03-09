@@ -12,7 +12,7 @@ namespace BusinessObjects.Mapper
         public AutoMapperProfile()
         {
             CreateMap<User, UserDTO>()
-                .ForMember(dto => dto.Role, act => act.MapFrom(obj => obj.Role.RoleName));
+                .ForMember(dto => dto.RoleName, act => act.MapFrom(obj => obj.Role.RoleName)).ReverseMap();
         }
     }
 }

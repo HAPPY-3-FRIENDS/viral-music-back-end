@@ -6,6 +6,7 @@ using System;
 using System.Text.Json;
 using ViralMusicAPI.Exceptions;
 using BusinessObjects.DataTranferObjects;
+using BusinessObjects.Exceptions;
 
 namespace ViralMusicAPI.Handler
 {
@@ -48,6 +49,15 @@ namespace ViralMusicAPI.Handler
                         ex.Message
                     );
                     response.StatusCode = (int)HttpStatusCode.NotFound;
+                    break;
+                case BadRequestException ex:
+                    errorResponse = new ErrorResponseDTO
+                    (
+                        "Bad Request",
+                        (int)HttpStatusCode.BadRequest,
+                        ex.Message
+                    );
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
                 case Exception ex:
                     errorResponse = new ErrorResponseDTO

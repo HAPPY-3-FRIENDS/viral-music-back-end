@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataAccessObjects
@@ -26,7 +27,7 @@ namespace DataAccessObjects
             }
         }
 
-        public async Task<User> getByUsername(string username)
+        public async Task<User> GetByUsername(string username)
         {
             User user = null;
             try
@@ -40,32 +41,55 @@ namespace DataAccessObjects
             return user;
         }
 
-        /*public async Task<User> mapUserDTOtoUser(UserDTO userDTO)
+        public async Task AddUserAsync(User user)
         {
-            User user = null;
             try
             {
-                var dbContext = new ViralMusicContext();
-                Role role = await dbContext.Roles.FirstOrDefaultAsync(r => r.RoleName == userDTO.Role);
-                if (role != null)
+                SetUserRole(user);
+
+                using (var dbContext = new ViralMusicContext())
                 {
-                    user = await dbContext.Users.FindAsync(username);
+                    dbContext.Users.Add(user);
+                    await dbContext.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            return user;
-        }*/
+        }
 
-        public async Task<User> InitUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
-            var dbContext = new ViralMusicContext();
-            Role role = await dbContext.Roles.FindAsync(2);
-            user.RoleId = 2;
-            /*user.Role = role;*/
-            return user;
+            try
+            {
+                SetUserRole(user);
+
+                using (var dbContext = new ViralMusicContext())
+                {
+                    dbContext.ChangeTracker.Clear();
+                    dbContext.Users.Update(user);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private static void SetUserRole(User user)
+        {
+            switch (user.Role.RoleName)
+            {
+                case "Admin":
+                    user.RoleId = 1;
+                    break;
+                case "User":
+                    user.RoleId = 2;
+                    break;
+            }
+            user.Role = null;
         }
     }
 }
