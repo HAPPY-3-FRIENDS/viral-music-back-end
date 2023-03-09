@@ -1,6 +1,8 @@
 ﻿using DataAccessObjects;
 using Repositories.IRepositories;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Repositories.Repositories
@@ -18,6 +20,9 @@ namespace Repositories.Repositories
 
         public async Task<IEnumerable<T>> GetAllAsync()
             => await GenericDAO<T>.Instance.GetAllAsync();
+
+        public async Task<IEnumerable<T>> GetAllIncludeAsync(List<Expression<Func<T, object>>> includes)
+            => await GenericDAO<T>.Instance.GetAllIncludeAsync(includes);
 
         public async Task<T> GetByIdAsync(int id)
             => await GenericDAO<T>.Instance.GetByIdAsync(id);

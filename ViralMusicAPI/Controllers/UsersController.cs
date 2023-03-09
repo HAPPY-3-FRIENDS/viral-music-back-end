@@ -10,6 +10,7 @@ using ViralMusicAPI.Handler;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using ViralMusicAPI.Exceptions;
+using System.Linq.Expressions;
 
 namespace ViralMusicAPI.Controllers
 {
@@ -51,7 +52,10 @@ namespace ViralMusicAPI.Controllers
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
                 "Find user successfully!",
                 HttpStatusCode.OK,
-                mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllAsync())));
+                mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllIncludeAsync(new List<Expression<Func<User, object>>>
+                {
+                    u => u.Role
+                })))) ;
         }
 
         [HttpGet("count", Name = "CountUsers")]
