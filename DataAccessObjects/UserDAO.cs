@@ -27,6 +27,21 @@ namespace DataAccessObjects
             }
         }
 
+        public async Task<User> Authentication(string username, string password)
+        {
+            User user = null;
+            try
+            {
+                var dbContext = new ViralMusicContext();
+                user = await dbContext.Users.Include(u => u.Role).Where(u => u.Username.Equals(username) && u.Password.Equals(password)).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return user;
+        }
+
         public async Task<User> GetByUsername(string username)
         {
             User user = null;
@@ -46,6 +61,11 @@ namespace DataAccessObjects
             try
             {
                 SetUserRole(user);
+                if (user.Avatar == null)
+                {
+                    // Default avatar
+                    user.Avatar = "https://www.pumpkin.care/wp-content/uploads/2020/08/Cat-Memes-2020.jpg";
+                }
 
                 using (var dbContext = new ViralMusicContext())
                 {

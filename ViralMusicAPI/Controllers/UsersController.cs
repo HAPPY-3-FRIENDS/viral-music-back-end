@@ -13,6 +13,7 @@ using ViralMusicAPI.Exceptions;
 using System.Linq.Expressions;
 using BusinessObjects.Exceptions;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ViralMusicAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace ViralMusicAPI.Controllers
     /// </summary>
     [Route("api/users")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -47,11 +49,13 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
         /// <response code="404">List of users Not Found</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(ResponseDTO<List<UserDTO>>), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<List<UserDTO>>>> GetUsers()
         {
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
@@ -60,7 +64,7 @@ namespace ViralMusicAPI.Controllers
                 mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllIncludeAsync(new List<Expression<Func<User, object>>>
                 {
                     u => u.Role
-                })))) ;
+                }))));
         }
 
         /// <summary>
@@ -83,11 +87,13 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
         /// <response code="404">User not found</response>
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(ResponseDTO<UserDTO>), 200)]
         [Produces("application/json")]
         [HttpGet("{username}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<UserDTO>>> GetUser(string username)
         {
             User user = await _userRepository.GetByUsername(username);
@@ -126,12 +132,14 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="201">Successfully</response>
+        /// <response code="401">Unauthorized</response>
         /// <response code="400">Bad request</response>
         /// <response code="500">Internal server error</response>
         [Consumes("application/json")]
         [ProducesResponseType(typeof(ResponseDTO<UserDTO>), 201)]
         [Produces("application/json")]
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<UserDTO>>> PostUser([Required][FromBody] UserDTO userDTO)
         {
             if (await UserExists(userDTO.Username) == true)
@@ -179,12 +187,14 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
         /// <response code="404">User not found</response>
         /// <response code="500">Internal server error</response>
         [Consumes("application/json")]
         [ProducesResponseType(typeof(ResponseDTO<UserDTO>), 200)]
         [Produces("application/json")]
         [HttpPut("{username}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> PutUser(string username, [Required][FromBody] UserDTO userDTO)
         {
             if (await UserExists(username) == false)
@@ -219,10 +229,12 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="204">Delete Successfully</response>
+        /// <response code="401">Unauthorized</response>
         /// <response code="404">User not found</response>
         /// <response code="500">Internal server error</response>
         [Produces("application/json")]
         [HttpDelete("{username}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> DeleteUser(string username)
         {
             User deleteUser = await _userRepository.GetByUsername(username);
@@ -237,6 +249,7 @@ namespace ViralMusicAPI.Controllers
         }
 
         [HttpGet("count", Name = "CountUsers")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<int>> CountUsers()
         {
             try
