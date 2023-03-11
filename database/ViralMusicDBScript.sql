@@ -1,8 +1,8 @@
 CREATE DATABASE ViralMusic
-GO;
+GO
 
 USE ViralMusic
-GO;
+GO
 
 ------------------------------ CREATE TABLE ------------------------------
 CREATE TABLE [User] (
@@ -12,13 +12,13 @@ CREATE TABLE [User] (
     Avatar TEXT NULL,
     RoleId INT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Role] (
     Id INT IDENTITY(1, 1) NOT NULL,
     RoleName NVARCHAR(16) NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Playlist] (
    Id INT IDENTITY(1, 1) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE [Playlist] (
    Image TEXT NULL,
    Owner VARCHAR(16) NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Track] (
     Id INT IDENTITY(1, 1) NOT NULL,
@@ -35,27 +35,27 @@ CREATE TABLE [Track] (
     Image TEXT NULL,
     Source TEXT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Track_In_Playlist] (
     Id INT IDENTITY(1, 1) NOT NULL,
     TrackId INT NOT NULL,
     PlaylistId INT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Genre] (
     Id INT IDENTITY(1, 1) NOT NULL,
     Name NVARCHAR(100) NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Track_Genre] (
     Id INT IDENTITY(1, 1) NOT NULL,
     GenreId INT NOT NULL,
     TrackId INT NOT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Artist] (
     Id INT IDENTITY(1, 1) NOT NULL,
@@ -63,14 +63,14 @@ CREATE TABLE [Artist] (
     Profile NTEXT NULL,
     Avatar TEXT NULL
 )
-GO;
+GO
 
 CREATE TABLE [Track_Artist] (
     Id INT IDENTITY(1, 1) NOT NULL,
     ArtistId INT NOT NULL,
     TrackId INT NOT NULL
 )
-GO;
+GO
 
 ------------------------------ CREATE CONSTRAINT ------------------------------
 --- PRIMARY KEY ---
