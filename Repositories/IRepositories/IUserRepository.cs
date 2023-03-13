@@ -6,7 +6,7 @@ namespace Repositories.IRepositories
     public interface IUserRepository : IGenericRepository<User>
     {
         Task<User> GetByUsername(string username);
-        Task AddUserAsync(User user);
+        Task<User> AddUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task<int> CountUsers();
     }

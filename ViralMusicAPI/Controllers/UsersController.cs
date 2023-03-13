@@ -125,8 +125,7 @@ namespace ViralMusicAPI.Controllers
         ///             "username": "tienhuynh-tn",
         ///             "password": "123",
         ///             "fullname": "Huỳnh Lê Thủy Tiên",
-        ///             "avatar": null,
-        ///             "roleName": "User"
+        ///             "avatar": null
         ///       }
         ///     
         /// </remarks>
@@ -139,18 +138,17 @@ namespace ViralMusicAPI.Controllers
         [ProducesResponseType(typeof(ResponseDTO<UserDTO>), 201)]
         [Produces("application/json")]
         [HttpPost]
-        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<UserDTO>>> PostUser([Required][FromBody] UserDTO userDTO)
         {
             if (await UserExists(userDTO.Username) == true)
                 throw new BadRequestException("User with username '" + userDTO.Username + "' is existed!");
 
-            await _userRepository.AddUserAsync(mapper.Map<User>(userDTO));
+            User user = await _userRepository.AddUserAsync(mapper.Map<User>(userDTO));
 
             return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
                 "Create user successfully!",
                 HttpStatusCode.Created,
-                userDTO
+                mapper.Map<UserDTO>(user)
                 ));
         }
 

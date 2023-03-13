@@ -10,7 +10,7 @@ namespace Repositories.Repositories
         public async Task<User> GetByUsername(string username)
             => await UserDAO.Instance.GetByUsername(username);
 
-        public async Task AddUserAsync(User user)
+        public async Task<User> AddUserAsync(User user)
             => await UserDAO.Instance.AddUserAsync(user);
 
         public async Task UpdateUserAsync(User user)

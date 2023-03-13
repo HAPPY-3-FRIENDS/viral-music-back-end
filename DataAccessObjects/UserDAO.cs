@@ -56,7 +56,7 @@ namespace DataAccessObjects
             return user;
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task<User> AddUserAsync(User user)
         {
             try
             {
@@ -72,6 +72,8 @@ namespace DataAccessObjects
                     dbContext.Users.Add(user);
                     await dbContext.SaveChangesAsync();
                 }
+                user.Role = GetRole((int)user.RoleId);
+                return user;
             }
             catch (Exception ex)
             {
@@ -98,18 +100,41 @@ namespace DataAccessObjects
             }
         }
 
-        private static void SetUserRole(User user)
+        private void SetUserRole(User user)
         {
             switch (user.Role.RoleName)
             {
                 case "Admin":
                     user.RoleId = 1;
                     break;
-                case "User":
+                default:
                     user.RoleId = 2;
                     break;
             }
             user.Role = null;
+        }
+
+        private Role GetRole(int roleId)
+        {
+            Role role = null;   
+            switch (roleId)
+            {
+                case 1:
+                    role = new Role
+                    {
+                        Id = 1,
+                        RoleName = "Admin"
+                    };
+                    break;
+                default:
+                    role = new Role
+                    {
+                        Id = 2,
+                        RoleName = "User"
+                    };
+                    break;
+            }
+            return role;
         }
     }
 }
