@@ -36,7 +36,7 @@ namespace Repositories.Repositories
                 new Claim("username", user.Username),
                 new Claim("fullname", user.Fullname),
                 new Claim("avatar", user.Avatar),
-                new Claim("rolename", user.Role.RoleName),
+                new Claim(ClaimTypes.Role, user.Role.RoleName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
