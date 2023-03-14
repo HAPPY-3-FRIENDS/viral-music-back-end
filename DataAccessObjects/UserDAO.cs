@@ -67,11 +67,7 @@ namespace DataAccessObjects
                     user.Avatar = "https://www.pumpkin.care/wp-content/uploads/2020/08/Cat-Memes-2020.jpg";
                 }
 
-                using (var dbContext = new ViralMusicContext())
-                {
-                    dbContext.Users.Add(user);
-                    await dbContext.SaveChangesAsync();
-                }
+                await AddAsync(user);
                 user.Role = GetRole((int)user.RoleId);
                 return user;
             }
@@ -87,12 +83,7 @@ namespace DataAccessObjects
             {
                 SetUserRole(user);
 
-                using (var dbContext = new ViralMusicContext())
-                {
-                    dbContext.ChangeTracker.Clear();
-                    dbContext.Users.Update(user);
-                    await dbContext.SaveChangesAsync();
-                }
+                await UpdateAsync(user);
             }
             catch (Exception ex)
             {
