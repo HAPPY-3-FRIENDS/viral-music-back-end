@@ -68,6 +68,15 @@ namespace ViralMusicAPI.Handler
                     );
                     response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     break;
+                case ForbiddenException ex:
+                    errorResponse = new ErrorResponseDTO
+                    (
+                        "Forbidden",
+                        (int)HttpStatusCode.Forbidden,
+                        ex.Message
+                    );
+                    response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    break;
                 case Exception ex:
                     errorResponse = new ErrorResponseDTO
                     (
