@@ -171,7 +171,7 @@ namespace ViralMusicAPI.Controllers
         /// - Return an update existing user.
         /// - Sample request: 
         /// 
-        ///       PUT /api/user/tienhuynh-tn
+        ///       PUT /api/users/tienhuynh-tn
         ///     
         /// - Sample request body: 
         ///     
@@ -193,7 +193,7 @@ namespace ViralMusicAPI.Controllers
         [Produces("application/json")]
         [HttpPut("{username}")]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> PutUser(string username, [Required][FromBody] UserDTO userDTO)
+        public async Task<ActionResult<ResponseDTO<UserDTO>>> PutUser(string username, [Required][FromBody] UserDTO userDTO)
         {
             if (await UserExists(username) == false)
                 throw new NotFoundException("User with username '" + username + "' does not exist!");
