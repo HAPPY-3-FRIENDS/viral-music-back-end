@@ -34,7 +34,7 @@ namespace DataAccessObjects
             try
             {
                 var dbContext = new ViralMusicContext();
-                /*track = await dbContext.Tracks.LastAsync;*/
+                track = await dbContext.Tracks.OrderBy(x => x.Id).LastOrDefaultAsync();
             }
             catch (Exception ex)
             {
