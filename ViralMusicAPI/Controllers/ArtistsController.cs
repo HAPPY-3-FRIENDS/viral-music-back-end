@@ -87,7 +87,7 @@ namespace ViralMusicAPI.Controllers
         [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
         [Produces("application/json")]
         [HttpGet("id/{id}")]
-        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<ArtistDTO>>> GetArtistById(int id)
         {
             Artist artist = await _artistRepository.GetByIdAsync(id);
@@ -124,7 +124,7 @@ namespace ViralMusicAPI.Controllers
         [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
         [Produces("application/json")]
         [HttpGet("name/{name}")]
-        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<ArtistDTO>>> GetArtistByName(string name)
         {
             Artist artist = await _artistRepository.GetByArtistName(name);
@@ -161,7 +161,7 @@ namespace ViralMusicAPI.Controllers
         [ProducesResponseType(typeof(ResponseDTO<IEnumerable<ArtistDTO>>), 200)]
         [Produces("application/json")]
         [HttpGet("list/{name}")]
-        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<IEnumerable<ArtistDTO>>> GetArtistList(string name)
         {
             IEnumerable<Artist> artists = await _artistRepository.GetListByArtistName(name);

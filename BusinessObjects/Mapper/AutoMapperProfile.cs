@@ -14,6 +14,7 @@ namespace BusinessObjects.Mapper
             CreateMap<Genre, GenreDTO>().ReverseMap();
             CreateMap<Track, TrackDTO>().ReverseMap();
             CreateMap<Artist, ArtistDTO>().ReverseMap();
+            CreateMap<Playlist, PlaylistDTO>().ReverseMap();
             CreateMap<TrackInPlaylist, TrackInPlaylistDTO>()
                 .ForMember(dto => dto.Track, act => act.MapFrom(obj => obj.Track))
                 .ReverseMap();
