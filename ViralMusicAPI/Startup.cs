@@ -35,6 +35,8 @@ namespace ViralMusicAPI
         {
             // Controller
             services.AddControllers();
+            services.AddControllersWithViews().AddNewtonsoftJson(
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             // Auto mapper
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
@@ -46,7 +48,7 @@ namespace ViralMusicAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
-
+            services.AddScoped<ITrackInPlaylistRepository, TrackInPlaylistRepository>();
 
             // Swagger
             services.AddSwaggerGen(options =>
