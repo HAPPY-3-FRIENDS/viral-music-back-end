@@ -149,7 +149,7 @@ namespace ViralMusicAPI.Controllers
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
                 "Update genre successfully!",
                 HttpStatusCode.OK,
-                genreDTO));
+                _mapper.Map<GenreDTO>(updateGenre)));
         }
 
         /// <summary>
@@ -190,12 +190,12 @@ namespace ViralMusicAPI.Controllers
                 throw new BadRequestException("Genre with name '" + genreDTO.Name + "' is existed!");
 
             await _genreRepository.AddAsync(_mapper.Map<Genre>(genreDTO));
+            Genre createGenre = await _genreRepository.GetByGenreName(genreDTO.Name);
 
             return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
                 "Create user successfully!",
                 HttpStatusCode.Created,
-                genreDTO
-                ));
+                _mapper.Map<GenreDTO>(createGenre)));
         }
 
         /// <summary>
