@@ -31,9 +31,9 @@ GO
 CREATE TABLE [Track] (
     Id INT IDENTITY(1, 1) NOT NULL,
     Title NVARCHAR(100) NOT NULL,
-    Duration INT NOT NULL,
     Image TEXT NULL,
-    Source TEXT NOT NULL
+    Source TEXT NOT NULL,
+    CreatedDate DATETIME
 )
 GO
 

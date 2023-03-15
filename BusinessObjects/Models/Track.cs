@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObjects.Models
 {
@@ -13,9 +14,9 @@ namespace BusinessObjects.Models
 
         public int Id { get; set; }
         public string Title { get; set; }
-        public int Duration { get; set; }
         public string Image { get; set; }
         public string Source { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public virtual ICollection<TrackArtist> TrackArtists { get; set; }
         public virtual ICollection<TrackGenre> TrackGenres { get; set; }

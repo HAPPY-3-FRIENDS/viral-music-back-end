@@ -14,6 +14,7 @@ namespace BusinessObjects.Mapper
             CreateMap<User, UserDTO>()
                 .ForMember(dto => dto.RoleName, act => act.MapFrom(obj => obj.Role.RoleName)).ReverseMap();
             CreateMap<Genre, GenreDTO>().ReverseMap();
+            CreateMap<Track, TrackDTO>().ReverseMap();
         }
     }
 }

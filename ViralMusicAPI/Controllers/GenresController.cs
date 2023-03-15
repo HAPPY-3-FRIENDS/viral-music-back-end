@@ -66,7 +66,7 @@ namespace ViralMusicAPI.Controllers
         /// Get a specific Genre by id.
         /// </summary>
         /// 
-        /// <param name="username">
+        /// <param name="id">
         /// Genre's id which is needed for finding.
         /// </param>
         /// 
@@ -130,7 +130,7 @@ namespace ViralMusicAPI.Controllers
         /// 
         /// <response code="200">Successfully</response>
         /// <response code="401">Unauthorized</response>
-        /// <response code="404">User not found</response>
+        /// <response code="404">Genre not found</response>
         /// <response code="500">Internal server error</response>
         [Consumes("application/json")]
         [ProducesResponseType(typeof(ResponseDTO<GenreDTO>), 200)]
@@ -193,7 +193,7 @@ namespace ViralMusicAPI.Controllers
             Genre createGenre = await _genreRepository.GetByGenreName(genreDTO.Name);
 
             return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
-                "Create user successfully!",
+                "Create genre successfully!",
                 HttpStatusCode.Created,
                 _mapper.Map<GenreDTO>(createGenre)));
         }
@@ -219,7 +219,7 @@ namespace ViralMusicAPI.Controllers
         /// 
         /// <response code="204">Delete Successfully</response>
         /// <response code="401">Unauthorized</response>
-        /// <response code="404">User not found</response>
+        /// <response code="404">Genre not found</response>
         /// <response code="500">Internal server error</response>
         [HttpDelete("{id}")]
         [Produces("application/json")]
@@ -234,7 +234,7 @@ namespace ViralMusicAPI.Controllers
             await _genreRepository.DeleteAsync(genre);
 
             return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
-                "Create user successfully!",
+                "Create genre successfully!",
                 HttpStatusCode.OK,
                 ""
                 ));
@@ -255,9 +255,9 @@ namespace ViralMusicAPI.Controllers
         ///       
         /// </remarks>
         /// 
-        /// <response code="204">Delete Successfully</response>
+        /// <response code="200">Successfully</response>
         /// <response code="401">Unauthorized</response>
-        /// <response code="404">User not found</response>
+        /// <response code="404">Genre not found</response>
         /// <response code="500">Internal server error</response>
         [HttpGet("count")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]

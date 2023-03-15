@@ -4,102 +4,285 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObjects.Models;
+using Repositories.IRepositories;
+using AutoMapper;
+using BusinessObjects.DataTranferObjects;
+using Microsoft.AspNetCore.Http;
+using System.Net;
+using ViralMusicAPI.Handler;
+using ViralMusicAPI.Exceptions;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
+using System;
+using BusinessObjects.Exceptions;
 
 namespace ViralMusicAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/tracks")]
     [ApiController]
     public class TracksController : ControllerBase
     {
-        private readonly ViralMusicContext _context;
+        private readonly ITrackRepository _trackRepository;
+        private readonly IMapper _mapper;
 
-        public TracksController(ViralMusicContext context)
+        public TracksController(ITrackRepository trackRepository, IMapper mapper)
         {
-            _context = context;
+            _trackRepository = trackRepository;
+            _mapper = mapper;
         }
 
-        // GET: api/Tracks
+        /// <summary>
+        /// Get a list of all tracks.
+        /// </summary>
+        /// 
+        /// <returns>A list of all tracks.</returns>
+        /// <remarks>
+        /// Description:
+        /// - Return a list of all tracks.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/tracks
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">List of tracks Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Track>>> GetTracks()
+        [ProducesResponseType(typeof(ResponseDTO<List<TrackDTO>>), StatusCodes.Status200OK)]
+        [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ResponseDTO<List<TrackDTO>>>> GetTracks()
         {
-            return await _context.Tracks.ToListAsync();
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find tracks successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<IEnumerable<TrackDTO>>(await _trackRepository.GetAllAsync())));
         }
 
-        // GET: api/Tracks/5
+        /// <summary>
+        /// Get a specific Track by id.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Track's id which is needed for finding.
+        /// </param>
+        /// 
+        /// <returns>A specific Track by id.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a specific Track by id.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/tracks/1
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Track not found</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(ResponseDTO<TrackDTO>), 200)]
+        [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Track>> GetTrack(int id)
+        public async Task<ActionResult<ResponseDTO<TrackDTO>>> GetTrack(int id)
         {
-            var track = await _context.Tracks.FindAsync(id);
-
-            if (track == null)
-            {
-                return NotFound();
-            }
-
-            return track;
+            Track track = await _trackRepository.GetByIdAsync(id);
+            if (track == null) throw new NotFoundException("Track is Not Found with id: " + id);
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find track successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<TrackDTO>(track)));
         }
 
-        // PUT: api/Tracks/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update an existing Track.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Track's id which is needed for updating.
+        /// </param>
+        /// 
+        /// <param name="Track">
+        /// Track object that needs to be updated.
+        /// </param>
+        /// 
+        /// <returns>An update existing Track.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return an update existing track.
+        /// - Sample request: 
+        /// 
+        ///       PUT /api/tracks/1
+        ///     
+        /// - Sample request body: 
+        ///     
+        ///       {
+        ///             "title": "Pop",
+        ///             "image": "link-image",
+        ///             "source": "link-source"
+        ///       }
+        ///     
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Track not found</response>
+        /// <response code="500">Internal server error</response>
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ResponseDTO<TrackDTO>), 200)]
+        [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTrack(int id, Track track)
+        public async Task<ActionResult<ResponseDTO<TrackDTO>>> PutTrack(int id, [Required][FromBody] TrackDTO trackDTO)
         {
-            if (id != track.Id)
-            {
-                return BadRequest();
-            }
+            if (await TrackExists(id) == false)
+                throw new NotFoundException("Track with id '" + id + "' does not exist!");
 
-            _context.Entry(track).State = EntityState.Modified;
+            Track updateTrack = await _trackRepository.GetByIdAsync(id);
+            updateTrack.Title = trackDTO.Title;
+            updateTrack.Image = trackDTO.Image;
+            updateTrack.Source = trackDTO.Source;
+            await _trackRepository.UpdateAsync(updateTrack);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TrackExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Update track successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<TrackDTO>(updateTrack)));
         }
 
-        // POST: api/Tracks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create a new Track.
+        /// </summary>
+        /// 
+        /// <param name="track">
+        /// Track object that needs to be created.
+        /// </param>
+        /// 
+        /// <returns>A new Track.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a new Track.
+        /// - Sample request: 
+        /// 
+        ///       POST /api/tracks
+        ///     
+        ///       {
+        ///             "title": "Pop",
+        ///             "image": "link-image",
+        ///             "source": "link-source"
+        ///       }
+        ///     
+        /// </remarks>
+        /// 
+        /// <response code="201">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="500">Internal server error</response>
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ResponseDTO<TrackDTO>), 201)]
+        [Produces("application/json")]
         [HttpPost]
-        public async Task<ActionResult<Track>> PostTrack(Track track)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ResponseDTO<TrackDTO>>> PostTrack([Required][FromBody] TrackDTO trackDTO)
         {
-            _context.Tracks.Add(track);
-            await _context.SaveChangesAsync();
+            DateTime time = DateTime.Now;
+            trackDTO.CreatedDate = time;
+            await _trackRepository.AddAsync(_mapper.Map<Track>(trackDTO));
 
-            return CreatedAtAction("GetTrack", new { id = track.Id }, track);
+            Track track = await _trackRepository.GetByTrackDateTime(time);
+
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+                "Create track successfully!",
+                HttpStatusCode.Created,
+                _mapper.Map<TrackDTO>(track)));
         }
 
-        // DELETE: api/Tracks/5
+        /// <summary>
+        /// Delete a specific Track.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Track's id which is needed for deleting a Track.
+        /// </param>
+        /// 
+        /// <returns>Delete action status.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return delete action status.
+        /// - Sample request: 
+        /// 
+        ///       DELETE /api/tracks/1
+        ///       
+        /// </remarks>
+        /// 
+        /// <response code="204">Delete Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Track not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTrack(int id)
+        [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(typeof(ResponseDTO<>), 200)]
+        public async Task<ActionResult<ResponseDTO<String>>> DeleteTrack(int id)
         {
-            var track = await _context.Tracks.FindAsync(id);
-            if (track == null)
-            {
-                return NotFound();
-            }
+            if (await TrackExists(id) == false)
+                throw new BadRequestException("Track with id '" + id + "' is not existed!");
 
-            _context.Tracks.Remove(track);
-            await _context.SaveChangesAsync();
+            Track track = await _trackRepository.GetByIdAsync(id);
+            await _trackRepository.DeleteAsync(track);
 
-            return NoContent();
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+                "Create track successfully!",
+                HttpStatusCode.OK,
+                ""
+                ));
         }
 
-        private bool TrackExists(int id)
+        /// <summary>
+        /// Count Track.
+        /// </summary>
+        /// 
+        /// <returns>Quantity of Track by String.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return quantity of track by String.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/tracks/count
+        ///       
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Track not found</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("count")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(typeof(ResponseDTO<int>), 200)]
+        public async Task<ActionResult<ResponseDTO<int>>> CountGenres()
         {
-            return _context.Tracks.Any(e => e.Id == id);
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+                "Count Track successfully!",
+                HttpStatusCode.OK,
+                await _trackRepository.CountAsync()
+                ));
         }
+
+        private async Task<bool> TrackExists(int id)
+        {
+            if (await _trackRepository.GetByIdAsync(id) == null)
+                return false;
+            return true;
+        }
+
+
     }
 }
