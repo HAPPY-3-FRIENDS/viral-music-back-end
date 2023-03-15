@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BusinessObjects.Models;
 using Repositories.IRepositories;
 using AutoMapper;
 using BusinessObjects.DataTranferObjects;
 using System.Net;
 using ViralMusicAPI.Handler;
-using System.Linq.Expressions;
-using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 
@@ -23,13 +19,11 @@ namespace ViralMusicAPI.Controllers
     [ApiController]
     public class TrackInPlaylistsController : ControllerBase
     {
-        private readonly ViralMusicContext _context;
         private readonly ITrackInPlaylistRepository _trackInPlaylistRepository;
         private readonly IMapper _mapper;
 
-        public TrackInPlaylistsController(ViralMusicContext context, ITrackInPlaylistRepository trackInPlaylistRepository, IMapper mapper)
+        public TrackInPlaylistsController(ITrackInPlaylistRepository trackInPlaylistRepository, IMapper mapper)
         {
-            _context = context;
             _trackInPlaylistRepository = trackInPlaylistRepository;
             _mapper = mapper;
         }
@@ -145,11 +139,6 @@ namespace ViralMusicAPI.Controllers
             await _trackInPlaylistRepository.DeleteATrackInAPlaylist(trackInPlaylistDTO.PlaylistId, trackInPlaylistDTO.TrackId);
 
             return NoContent();
-        }
-
-        private bool TrackInPlaylistExists(int id)
-        {
-            return _context.TrackInPlaylists.Any(e => e.Id == id);
         }
     }
 }

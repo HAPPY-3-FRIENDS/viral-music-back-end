@@ -50,6 +50,7 @@ namespace ViralMusicAPI
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<ITrackRepository, TrackRepository>();
             services.AddScoped<ITrackInPlaylistRepository, TrackInPlaylistRepository>();
+            services.AddScoped<ITrackArtistRepository, TrackArtistRepository>();
             services.AddScoped<IArtistRepository, ArtistRepository>();
             services.AddScoped<IPlaylistRepository, PlaylistRepository>();
 
