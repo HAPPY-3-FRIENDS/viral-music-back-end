@@ -4,102 +4,371 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObjects.Models;
+using Repositories.IRepositories;
+using AutoMapper;
+using BusinessObjects.DataTranferObjects;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using System.Net;
+using ViralMusicAPI.Handler;
+using ViralMusicAPI.Exceptions;
+using System.ComponentModel.DataAnnotations;
+using BusinessObjects.Exceptions;
+using System;
 
 namespace ViralMusicAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/artists")]
     [ApiController]
     public class ArtistsController : ControllerBase
     {
-        private readonly ViralMusicContext _context;
+        private readonly IArtistRepository _artistRepository;
+        private readonly IMapper _mapper;
 
-        public ArtistsController(ViralMusicContext context)
+        public ArtistsController(IArtistRepository artistRepository, IMapper mapper)
         {
-            _context = context;
+            _artistRepository = artistRepository;
+            _mapper = mapper;
         }
 
-        // GET: api/Artists
+        /// <summary>
+        /// Get a list of all artists.
+        /// </summary>
+        /// 
+        /// <returns>A list of all artists.</returns>
+        /// <remarks>
+        /// Description:
+        /// - Return a list of all artists.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/artists
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">List of artists Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(ResponseDTO<List<ArtistDTO>>), StatusCodes.Status200OK)]
+        [Produces("application/json")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Artist>>> GetArtists()
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ResponseDTO<List<ArtistDTO>>>> GetArtists()
         {
-            return await _context.Artists.ToListAsync();
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find genres successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<IEnumerable<ArtistDTO>>(await _artistRepository.GetAllAsync())));
         }
 
-        // GET: api/Artists/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Artist>> GetArtist(int id)
+        /// <summary>
+        /// Get a specific Artist by id.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Artist's id which is needed for finding.
+        /// </param>
+        /// 
+        /// <returns>A specific Artist by id.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a specific Artist by id.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/artists/id/1
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Artist not found</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
+        [Produces("application/json")]
+        [HttpGet("id/{id}")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ResponseDTO<ArtistDTO>>> GetArtistById(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
+            Artist artist = await _artistRepository.GetByIdAsync(id);
+            if (artist == null) throw new NotFoundException("Artist is Not Found with id: " + id);
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find artist successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<ArtistDTO>(artist)));
+        }
 
-            if (artist == null)
+        /// <summary>
+        /// Get a specific Artist by name.
+        /// </summary>
+        /// 
+        /// <param name="name">
+        /// Artist's name which is needed for finding.
+        /// </param>
+        /// 
+        /// <returns>A specific Artist by name.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a specific Artist by name.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/artists/name/tlinh
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Artist not found</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
+        [Produces("application/json")]
+        [HttpGet("name/{name}")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ResponseDTO<ArtistDTO>>> GetArtistByName(string name)
+        {
+            Artist artist = await _artistRepository.GetByArtistName(name);
+            if (artist == null) throw new NotFoundException("Artist is Not Found with name: " + name);
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find artist successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<ArtistDTO>(artist)));
+        }
+
+        /// <summary>
+        /// Get a List Artist by name.
+        /// </summary>
+        /// 
+        /// <param name="name">
+        /// Artist's name which is needed for finding.
+        /// </param>
+        /// 
+        /// <returns>A List of Artist by name.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a list of Artist by name.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/artists/list/tlinh
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Artist not found</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(ResponseDTO<IEnumerable<ArtistDTO>>), 200)]
+        [Produces("application/json")]
+        [HttpGet("list/{name}")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<IEnumerable<ArtistDTO>>> GetArtistList(string name)
+        {
+            IEnumerable<Artist> artists = await _artistRepository.GetListByArtistName(name);
+            if (artists == null) throw new NotFoundException("Artists is Not Found with name: " + name);
+            List<ArtistDTO> artistDTOs = new List<ArtistDTO>();
+            foreach (var artist in artists)
             {
-                return NotFound();
+                var artistDTO = _mapper.Map<ArtistDTO>(artist);
+                artistDTOs.Add(artistDTO);
             }
 
-            return artist;
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find artists successfully!",
+                HttpStatusCode.OK,
+                artistDTOs));
         }
 
-        // PUT: api/Artists/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update an existing Artist.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Artist's id which is needed for updating.
+        /// </param>
+        /// 
+        /// <param name="Artist">
+        /// Artist object that needs to be updated.
+        /// </param>
+        /// 
+        /// <returns>An update existing Artist.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return an update existing Artist.
+        /// - Sample request: 
+        /// 
+        ///       PUT /api/artist/1
+        ///     
+        /// - Sample request body: 
+        ///     
+        ///       {
+        ///             "name": "tlinh",
+        ///             "profile": "Profile ne",
+        ///             "avatar": "Avatar ne"
+        ///       }
+        ///     
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Artist not found</response>
+        /// <response code="500">Internal server error</response>
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
+        [Produces("application/json")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutArtist(int id, Artist artist)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<ActionResult<ResponseDTO<ArtistDTO>>> PutArtist(int id, [Required][FromBody] ArtistDTO artistDTO)
         {
-            if (id != artist.Id)
-            {
-                return BadRequest();
-            }
+            if (await ArtistExists(id) == false)
+                throw new NotFoundException("Artist with id '" + id + "' does not exist!");
 
-            _context.Entry(artist).State = EntityState.Modified;
+            Artist updateArtist = await _artistRepository.GetByIdAsync(id);
+            updateArtist.Avatar = artistDTO.Avatar;
+            updateArtist.Profile = artistDTO.Profile;
+            updateArtist.Name = artistDTO.Name;
+            await _artistRepository.UpdateAsync(updateArtist);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ArtistExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Update artist successfully!",
+                HttpStatusCode.OK,
+                _mapper.Map<ArtistDTO>(updateArtist)));
         }
 
-        // POST: api/Artists
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create a new Artist.
+        /// </summary>
+        /// 
+        /// <param name="Artist">
+        /// Artist object that needs to be created.
+        /// </param>
+        /// 
+        /// <returns>A new Artist.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a new Artist.
+        /// - Sample request: 
+        /// 
+        ///       POST /api/artist
+        ///     
+        ///       {
+        ///             "name": "tlinh",
+        ///             "profile": "Profile ne",
+        ///             "avatar": "Avatar ne"
+        ///       }
+        ///     
+        /// </remarks>
+        /// 
+        /// <response code="201">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="500">Internal server error</response>
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 201)]
+        [Produces("application/json")]
         [HttpPost]
-        public async Task<ActionResult<Artist>> PostArtist(Artist artist)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<ActionResult<ResponseDTO<ArtistDTO>>> PostArtist([Required][FromBody] ArtistDTO artistDTO)
         {
-            _context.Artists.Add(artist);
-            await _context.SaveChangesAsync();
+            if (await ArtistExists(artistDTO.Name) == true)
+                throw new BadRequestException("Artist with name '" + artistDTO.Name + "' is existed!");
 
-            return CreatedAtAction("GetArtist", new { id = artist.Id }, artist);
+            await _artistRepository.AddAsync(_mapper.Map<Artist>(artistDTO));
+            Artist createArtist = await _artistRepository.GetByArtistName(artistDTO.Name);
+
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+                "Create artist successfully!",
+                HttpStatusCode.Created,
+                _mapper.Map<ArtistDTO>(createArtist)));
         }
 
-        // DELETE: api/Artists/5
+        /// <summary>
+        /// Delete a specific Artist.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Artist's id which is needed for deleting a Artist.
+        /// </param>
+        /// 
+        /// <returns>Delete action status.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return delete action status.
+        /// - Sample request: 
+        /// 
+        ///       DELETE /api/artists/1
+        ///       
+        /// </remarks>
+        /// 
+        /// <response code="204">Delete Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Artist not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArtist(int id)
+        [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [ProducesResponseType(typeof(ResponseDTO<>), 200)]
+        public async Task<ActionResult<ResponseDTO<String>>> DeleteArtist(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
-            if (artist == null)
-            {
-                return NotFound();
-            }
+            if (await ArtistExists(id) == false)
+                throw new BadRequestException("Artist with id '" + id + "' is not existed!");
 
-            _context.Artists.Remove(artist);
-            await _context.SaveChangesAsync();
+            Artist artist = await _artistRepository.GetByIdAsync(id);
+            await _artistRepository.DeleteAsync(artist);
 
-            return NoContent();
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+                "Create artist successfully!",
+                HttpStatusCode.OK,
+                ""
+                ));
         }
 
-        private bool ArtistExists(int id)
+        /// <summary>
+        /// Count Artist.
+        /// </summary>
+        /// 
+        /// <returns>Quantity of Artist by String.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return quantity of Artist by String.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/artists/count
+        ///       
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Artist not found</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("count")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(typeof(ResponseDTO<int>), 200)]
+        public async Task<ActionResult<ResponseDTO<int>>> CountArtists()
         {
-            return _context.Artists.Any(e => e.Id == id);
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+                "Count Artists successfully!",
+                HttpStatusCode.OK,
+                await _artistRepository.CountAsync()
+                ));
+        }
+
+        private async Task<bool> ArtistExists(int id)
+        {
+            if (await _artistRepository.GetByIdAsync(id) == null)
+                return false;
+            return true;
+        }
+
+        private async Task<bool> ArtistExists(string name)
+        {
+            if (await _artistRepository.GetByArtistName(name) == null)
+                return false;
+            return true;
         }
     }
 }
