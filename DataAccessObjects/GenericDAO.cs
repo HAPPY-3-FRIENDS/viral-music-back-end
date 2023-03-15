@@ -65,6 +65,61 @@ namespace DataAccessObjects
             return t;
         }
 
+        public async Task<IEnumerable<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> expression)
+        {
+            IEnumerable<T> t = null;
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    t = await dbContext.Set<T>().Where(expression).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return t;
+        }
+
+        public async Task<IEnumerable<T>> GetAllWithConditionIncludeAsync(Expression<Func<T, bool>> expression, List<Expression<Func<T, object>>> includes)
+        {
+            IEnumerable<T> t = null;
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    IQueryable<T> query = dbContext.Set<T>();
+                    t = await includes
+                        .Aggregate(query, (current, include) => current.Include(include))
+                        .Where(expression)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return t;
+        }
+
+        public async Task<T> GetAWithConditionAsync(Expression<Func<T, bool>> expression)
+        {
+            T t = null;
+            try
+            {
+                using (var dbContext = new ViralMusicContext())
+                {
+                    t = await dbContext.Set<T>().Where(expression).FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return t;
+        }
+
         public async Task<T> GetByIdAsync(int id)
         {
             T t = null;

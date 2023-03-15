@@ -24,6 +24,12 @@ namespace Repositories.Repositories
         public async Task<IEnumerable<T>> GetAllIncludeAsync(List<Expression<Func<T, object>>> includes)
             => await GenericDAO<T>.Instance.GetAllIncludeAsync(includes);
 
+        public async Task<IEnumerable<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> expression)
+            => await GenericDAO<T>.Instance.GetAllWithConditionAsync(expression);
+
+        public async Task<IEnumerable<T>> GetAllWithConditionIncludeAsync(Expression<Func<T, bool>> expression, List<Expression<Func<T, object>>> includes)
+            => await GenericDAO<T>.Instance.GetAllWithConditionIncludeAsync(expression, includes);
+
         public async Task<T> GetByIdAsync(int id)
             => await GenericDAO<T>.Instance.GetByIdAsync(id);
 
