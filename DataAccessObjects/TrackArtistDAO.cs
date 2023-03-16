@@ -71,5 +71,34 @@ namespace DataAccessObjects
             }
             return t;
         }
+
+        public async Task AddListArtistToATrack(int trackId, List<int> listArtistIds)
+        {
+            List<TrackArtist> t = new List<TrackArtist>();
+            try
+            {
+                foreach (var artistId in listArtistIds)
+                {
+                    TrackArtist trackArtist = new TrackArtist
+                    {
+                        TrackId = trackId,
+                        ArtistId = artistId
+                    };
+                    t.Add(trackArtist);
+                }
+                using (var dbContext = new ViralMusicContext())
+                {
+                    foreach (var trackArtist in t)
+                    {
+                        await dbContext.TrackArtists.AddRangeAsync(trackArtist);
+                    }
+                    dbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

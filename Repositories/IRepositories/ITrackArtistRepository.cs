@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Models;
+﻿using BusinessObjects.DataTranferObjects;
+using BusinessObjects.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,5 +9,6 @@ namespace Repositories.IRepositories
     {
         Task<IEnumerable<TrackArtist>> GetAllTracksOfArtistByArtistIdAsync(int artistId);
         Task<IEnumerable<TrackArtist>> GetAllArtistOfTrackByTrackIdAsync(int trackId);
+        Task AddListArtistToATrack(int trackId, List<int> listArtistIds);
     }
 }

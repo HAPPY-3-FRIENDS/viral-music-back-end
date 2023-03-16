@@ -8,6 +8,7 @@ using System.Net;
 using ViralMusicAPI.Handler;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using BusinessObjects.Models;
 
 namespace ViralMusicAPI.Controllers
 {
@@ -95,6 +96,45 @@ namespace ViralMusicAPI.Controllers
             "Find a of all artists of a track by trackId successfully!",
             HttpStatusCode.OK,
             _mapper.Map<IEnumerable<TrackArtistDTO>>(await _trackArtistRepository.GetAllArtistOfTrackByTrackIdAsync(trackId))));
+        }
+
+        /// <summary>
+        /// Add list of artistId to a Track by trackId.
+        /// </summary>
+        /// 
+        /// <param name="listArtistIds">
+        /// List of artist Ids
+        /// </param>
+        /// 
+        /// <returns>Create action status.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return create action status.
+        /// - Sample request: 
+        /// 
+        ///       POST /api/tracks-artists/tracks/{trackId}
+        ///     
+        /// </remarks>
+        /// 
+        /// <response code="201">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="404">Resoure Not Found</response>
+        /// <response code="500">Internal server error</response>
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ResponseDTO<TrackArtistDTO>), 201)]
+        [Produces("application/json")]
+        [HttpPost("/tracks/{trackId}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ResponseDTO<TrackArtistDTO>>> AddListArtistToATrack(int trackId, [FromBody] List<int> listArtistIds)
+        {
+            await _trackArtistRepository.AddListArtistToATrack(trackId, listArtistIds);
+
+            return StatusCode((int)HttpStatusCode.Created, ResponseBuilderHandler.generateResponse(
+            "Add a list of artist id to a track by trackId successfully!",
+            HttpStatusCode.Created,
+            ""));
         }
     }
 }

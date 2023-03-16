@@ -88,11 +88,11 @@ namespace ViralMusicAPI.Controllers
         /// <response code="404">Resoure Not Found</response>
         /// <response code="500">Internal server error</response>
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(ResponseDTO<UserDTO>), 201)]
+        [ProducesResponseType(typeof(ResponseDTO<TrackInPlaylistDTO>), 201)]
         [Produces("application/json")]
         [HttpPost]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<ActionResult<TrackInPlaylist>> AddATrackToAPlaylist([FromBody] TrackInPlaylistDTO trackInPlaylistDTO)
+        public async Task<ActionResult<ResponseDTO<TrackInPlaylistDTO>>> AddATrackToAPlaylist([FromBody] TrackInPlaylistDTO trackInPlaylistDTO)
         {
             await _trackInPlaylistRepository.AddATrackToAPlaylist(trackInPlaylistDTO.PlaylistId, trackInPlaylistDTO.TrackId);
 
