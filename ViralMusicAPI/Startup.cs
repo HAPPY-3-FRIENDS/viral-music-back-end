@@ -53,6 +53,7 @@ namespace ViralMusicAPI
             services.AddScoped<ITrackArtistRepository, TrackArtistRepository>();
             services.AddScoped<IArtistRepository, ArtistRepository>();
             services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+            services.AddScoped<ITrackGenreRepository, TrackGenreRepository>();
 
             // Swagger
             services.AddSwaggerGen(options =>

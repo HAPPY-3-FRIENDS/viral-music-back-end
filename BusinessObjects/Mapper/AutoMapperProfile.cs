@@ -22,6 +22,10 @@ namespace BusinessObjects.Mapper
                 .ForMember(dto => dto.Track, act => act.MapFrom(obj => obj.Track))
                 .ForMember(dto => dto.Artist, act => act.MapFrom(obj => obj.Artist))
                 .ReverseMap();
+            CreateMap<TrackGenre, TrackGenreDTO>()
+                .ForMember(dto => dto.Track, act => act.MapFrom(obj => obj.Track))
+                .ForMember(dto => dto.Genre, act => act.MapFrom(obj => obj.Genre))
+                .ReverseMap();
         }
     }
 }
