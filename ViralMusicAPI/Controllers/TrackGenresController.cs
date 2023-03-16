@@ -76,7 +76,7 @@ namespace ViralMusicAPI.Controllers
         /// - Return a list of all genres of a track by trackId.
         /// - Sample request: 
         /// 
-        ///       GET /api/tracks-genres/tracks/{trackId}
+        ///       GET /api/tracks-genres/track/{trackId}
         /// 
         /// </remarks>
         /// 
@@ -111,7 +111,7 @@ namespace ViralMusicAPI.Controllers
         /// - Return create action status.
         /// - Sample request: 
         /// 
-        ///       POST /api/tracks-artists/tracks/{trackId}
+        ///       POST /api/tracks-artists/track/{trackId}
         ///     
         /// </remarks>
         /// 
