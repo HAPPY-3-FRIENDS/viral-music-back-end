@@ -13,6 +13,7 @@
 - [License & Copyright](#license--copyright)
 
 ## Description
+- The website synthesizes the music that is going viral.
 - This project started from 03-01-2023 to 31-03-2023
 
 ## Preview Screenshot
@@ -50,10 +51,16 @@
 ## Functional requirements
 
 **1. User:**
+- [ ] Listen to viral music.
+- [ ] Select shuffle playlist by tags.
+- [ ] Search for viral music.
+- [ ] Viral Music Chart.
+- [ ] Register - login - logout.
+- [ ] List of favorite music listened to.
 
 **2. Admin:**
-
-**3. Manager:**
+- [ ] Login - logout. 
+- [ ] Add - delete - edit information of music pieces.
 
 ## Useful Resources
 
@@ -66,6 +73,8 @@
 -| 2.1| [Database Script](https://github.com/HAPPY-3-FRIENDS/viral-music-back-end/blob/main/database/ViralMusicDBScript.sql) | SQL Scipt
 -| 2.2| [Database Entity Relationship Diagram]() | Database ERD
 3| -| [UI Design](https://www.figma.com/proto/HDnvo2txSBeXvzgSTHeUyj/PRN231---Viral-Music-Web?node-id=12-263&scaling=scale-down&page-id=0%3A1&starting-point-node-id=17%3A293&show-proto-sidebar=1) | UI design on Figma
+-| 3.1| [UI Design Screenshot](https://github.com/HAPPY-3-FRIENDS/viral-music-back-end/tree/main/UI) | UI Design Screenshot
+4| -| [Document Folder](https://github.com/HAPPY-3-FRIENDS/viral-music-back-end/tree/main/Requirement) | Document folder includes Requirement and Business Rules
 
 ## Contributors
 **1. Mentors:**
