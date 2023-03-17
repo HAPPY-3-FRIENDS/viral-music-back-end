@@ -1,4 +1,4 @@
-# CÔ TẤM - SWD392 
+# VIRAL MUSIC WEB - PRN231
 
 :wave: Welcome to our Building Cross-Platform Back-End Application With .NET (PRN231) Project :wave:
 
