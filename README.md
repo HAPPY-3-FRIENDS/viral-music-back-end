@@ -77,7 +77,6 @@
 - [Nguyen Lam Thuy Phuong](https://github.com/nguyenlamthuyphuong25) - 	SE150999 - **UI Designer | Front-end Developer | Back-end Developer**
 
 ## References
-- [Flutter documentation](https://docs.flutter.dev/)
 
 ## License & Copyright
 &copy; 2023 Happy-3-Friends Licensed under the [GPL-3.0 LICENSE](https://github.com/HAPPY-3-FRIENDS/viral-music-back-end/blob/main/LICENSE).
