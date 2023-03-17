@@ -45,8 +45,9 @@ namespace ViralMusicAPI.Controllers
         /// 
         /// </remarks>
         /// 
-        /// <response code="200">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="200">Return a list of all artists Successfully</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">List of artists Not Found</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(ResponseDTO<List<ArtistDTO>>), StatusCodes.Status200OK)]
@@ -56,7 +57,7 @@ namespace ViralMusicAPI.Controllers
         public async Task<ActionResult<ResponseDTO<List<ArtistDTO>>>> GetArtists()
         {
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
-                "Find genres successfully!",
+                "Find list of all artists successfully!",
                 HttpStatusCode.OK,
                 _mapper.Map<IEnumerable<ArtistDTO>>(await _artistRepository.GetAllAsync())));
         }
@@ -80,8 +81,9 @@ namespace ViralMusicAPI.Controllers
         /// 
         /// </remarks>
         /// 
-        /// <response code="200">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="200">Return a specific Artist by id Successfully</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">Artist not found</response>
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
@@ -93,7 +95,7 @@ namespace ViralMusicAPI.Controllers
             Artist artist = await _artistRepository.GetByIdAsync(id);
             if (artist == null) throw new NotFoundException("Artist is Not Found with id: " + id);
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
-                "Find artist successfully!",
+                "Find artist by Id successfully!",
                 HttpStatusCode.OK,
                 _mapper.Map<ArtistDTO>(artist)));
         }
@@ -118,7 +120,8 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">Artist not found</response>
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(ResponseDTO<ArtistDTO>), 200)]
@@ -130,7 +133,7 @@ namespace ViralMusicAPI.Controllers
             Artist artist = await _artistRepository.GetByArtistName(name);
             if (artist == null) throw new NotFoundException("Artist is Not Found with name: " + name);
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
-                "Find artist successfully!",
+                "Find artist by name successfully!",
                 HttpStatusCode.OK,
                 _mapper.Map<ArtistDTO>(artist)));
         }
@@ -155,7 +158,8 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">Artist not found</response>
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(ResponseDTO<IEnumerable<ArtistDTO>>), 200)]
@@ -211,7 +215,8 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">Artist not found</response>
         /// <response code="500">Internal server error</response>
         [Consumes("application/json")]
@@ -262,7 +267,8 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="201">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="400">Bad request</response>
         /// <response code="500">Internal server error</response>
         [Consumes("application/json")]
@@ -304,7 +310,8 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="204">Delete Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">Artist not found</response>
         /// <response code="500">Internal server error</response>
         [HttpDelete("{id}")]
@@ -342,7 +349,8 @@ namespace ViralMusicAPI.Controllers
         /// </remarks>
         /// 
         /// <response code="200">Successfully</response>
-        /// <response code="401">Unauthorized</response>
+        /// <response code="401">Unauthenticated</response>
+        /// <response code="403">Unauthorized</response>
         /// <response code="404">Artist not found</response>
         /// <response code="500">Internal server error</response>
         [HttpGet("count")]
