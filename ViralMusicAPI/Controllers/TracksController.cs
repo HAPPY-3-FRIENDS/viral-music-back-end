@@ -58,7 +58,11 @@ namespace ViralMusicAPI.Controllers
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
                 "Find tracks successfully!",
                 HttpStatusCode.OK,
-                _mapper.Map<IEnumerable<TrackDTO>>(await _trackRepository.GetAllAsync())));
+                _mapper.Map<IEnumerable<TrackDTO>>(await _trackRepository.GetAllIncludeAsync(new List<System.Linq.Expressions.Expression<Func<Track, object>>>
+                {
+                    t => t.TrackArtists,
+                    t => t.TrackGenres
+                }))));
         }
 
         /// <summary>

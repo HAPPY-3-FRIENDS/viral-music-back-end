@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BusinessObjects.Models;
+using System;
+using System.Collections.Generic;
 
 namespace BusinessObjects.DataTranferObjects
 {
@@ -9,5 +11,7 @@ namespace BusinessObjects.DataTranferObjects
         public string Image { get; set; }
         public string Source { get; set; }
         public DateTime CreatedDate { get; set; }
+        public virtual ICollection<TrackArtist> TrackArtists { get; set; }
+        public virtual ICollection<TrackGenre> TrackGenres { get; set; }
     }
 }
