@@ -53,7 +53,7 @@ namespace ViralMusicAPI.Controllers
         [ProducesResponseType(typeof(ResponseDTO<List<GenreDTO>>), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,User")]
         public async Task<ActionResult<ResponseDTO<List<GenreDTO>>>> GetGenres()
         {
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
