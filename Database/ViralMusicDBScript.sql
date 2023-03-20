@@ -33,7 +33,7 @@ CREATE TABLE [Track] (
     Title NVARCHAR(100) NOT NULL,
     Image TEXT NULL,
     Source TEXT NOT NULL,
-    CreatedDate DATETIME
+    CreatedDate DATETIME NULL
 )
 GO
 
@@ -108,4 +108,3 @@ ALTER TABLE [Track_Artist] ADD CONSTRAINT FK_TrackArtist_Track
 
 ALTER TABLE [Track_Artist] ADD CONSTRAINT FK_TrackArtist_Artist
     FOREIGN KEY (ArtistId) REFERENCES [Artist](Id);
-1
