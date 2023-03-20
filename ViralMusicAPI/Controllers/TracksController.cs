@@ -53,16 +53,21 @@ namespace ViralMusicAPI.Controllers
         [ProducesResponseType(typeof(ResponseDTO<List<TrackDTO>>), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<ActionResult<ResponseDTO<List<TrackDTO>>>> GetTracks()
+        
+        public async Task<ActionResult<ResponseDTO<IEnumerable<Track>>>> GetTracks()
         {
+            /*List<Expression<Func<Track, object>>> include = new List<Expression<Func<Track, object>>>
+            {
+                t => t.TrackArtists,
+                t => t.TrackGenres,
+                t => t.TrackArtists.Select(x => x.Artist),
+                t => t.TrackGenres.Select(x => x.Genre)
+            };*/
+            List<string> includes = new List<string> { "TrackArtists.Artist", "TrackGenres.Genre" };
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
                 "Find tracks successfully!",
                 HttpStatusCode.OK,
-                _mapper.Map<IEnumerable<TrackDTO>>(await _trackRepository.GetAllIncludeAsync(new List<System.Linq.Expressions.Expression<Func<Track, object>>>
-                {
-                    t => t.TrackArtists,
-                    t => t.TrackGenres
-                }))));
+                await _trackRepository.GetAllIncludeAsync(includes)));
         }
 
         /// <summary>

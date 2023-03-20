@@ -45,7 +45,7 @@ namespace DataAccessObjects
             return t;
         }
 
-        public async Task<IEnumerable<T>> GetAllIncludeAsync(List<Expression<Func<T, object>>> includes)
+        public async Task<IEnumerable<T>> GetAllIncludeAsync(List<string> includes)
         {
             IEnumerable<T> t = null;
             try
@@ -53,9 +53,11 @@ namespace DataAccessObjects
                 using (var dbContext = new ViralMusicContext())
                 {
                     IQueryable<T> query = dbContext.Set<T>();
-                    t = await includes
-                        .Aggregate(query, (current, include) => current.Include(include))
-                        .ToListAsync();
+                    foreach (string include in includes)
+                    {
+                        query = query.Include(include);
+                    }
+                    t = await query.ToListAsync();
                 }
             }
             catch (Exception ex)

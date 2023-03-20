@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using System;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
+
+#nullable disable
 
 namespace BusinessObjects.Models
 {
@@ -97,6 +101,8 @@ namespace BusinessObjects.Models
             {
                 entity.ToTable("Track");
 
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
                 entity.Property(e => e.Image).HasColumnType("text");
 
                 entity.Property(e => e.Source)
@@ -181,6 +187,7 @@ namespace BusinessObjects.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Role");
             });
 

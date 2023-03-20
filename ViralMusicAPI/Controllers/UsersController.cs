@@ -58,13 +58,11 @@ namespace ViralMusicAPI.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ResponseDTO<List<UserDTO>>>> GetUsers()
         {
+            List<string> includes = new List<string> { "Role" };
             return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
                 "Find user successfully!",
                 HttpStatusCode.OK,
-                mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllIncludeAsync(new List<Expression<Func<User, object>>>
-                {
-                    u => u.Role
-                }))));
+                mapper.Map<IEnumerable<UserDTO>>(await _userRepository.GetAllIncludeAsync(includes))));
         }
 
         /// <summary>

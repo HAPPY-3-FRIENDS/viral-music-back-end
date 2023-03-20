@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace BusinessObjects.Models
 {
@@ -13,7 +16,7 @@ namespace BusinessObjects.Models
         public string Password { get; set; }
         public string Fullname { get; set; }
         public string Avatar { get; set; }
-        public int? RoleId { get; set; }
+        public int RoleId { get; set; }
 
         public virtual Role Role { get; set; }
         public virtual ICollection<Playlist> Playlists { get; set; }
