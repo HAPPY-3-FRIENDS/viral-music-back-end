@@ -64,6 +64,7 @@ namespace DataAccessObjects
                 {
                     Track trueTrack = await dbContext.Tracks.FirstOrDefaultAsync(u => u.Id.Equals(trackgenre.TrackId));
                     TrackGetByGenreDTO track = mapper.Map<TrackGetByGenreDTO>(trueTrack);
+                    track.Artists = new List<string>();
                     IEnumerable<TrackArtist> trackArtists = await TrackArtistDAO.Instance.GetAllArtistOfTrackByTrackIdAsync(trackgenre.TrackId);
                     foreach (var trackArtist in trackArtists)
                     {

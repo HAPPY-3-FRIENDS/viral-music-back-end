@@ -306,7 +306,7 @@ namespace ViralMusicAPI.Controllers
         [HttpGet("genrefilter")]
         [ProducesResponseType(typeof(ResponseDTO<List<GenreGetAllTrackDTO>>), StatusCodes.Status200OK)]
         [Produces("application/json")]
-        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
 
         public async Task<ActionResult<ResponseDTO<IEnumerable<GenreGetAllTrackDTO>>>> GetAllTracksFilterByGenre()
         {
