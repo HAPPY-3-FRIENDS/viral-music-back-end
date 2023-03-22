@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Models;
+﻿using AutoMapper;
+using BusinessObjects.DataTranferObjects;
+using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +12,6 @@ namespace Repositories.IRepositories
     public interface IGenreRepository : IGenericRepository<Genre>
     {
         Task<Genre> GetByGenreName(string genreName);
+        Task<IEnumerable<GenreGetAllTrackDTO>> getAllTracksFilterByGenre(IMapper mapper);
     }
 }

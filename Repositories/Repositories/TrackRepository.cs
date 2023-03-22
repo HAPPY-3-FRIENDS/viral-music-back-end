@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Models;
+﻿using BusinessObjects.DataTranferObjects;
+using BusinessObjects.Models;
 using DataAccessObjects;
 using Repositories.IRepositories;
 using System;

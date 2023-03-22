@@ -284,5 +284,44 @@ namespace ViralMusicAPI.Controllers
                 return false;
             return true;
         }
+
+        /// <summary>
+        /// Get all tracks filter by genre.
+        /// </summary>
+        /// 
+        /// <returns>All tracks filter by genre.</returns>
+        /// <remarks>
+        /// Description:
+        /// - Return All tracks filter by genre.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/genres/genrefilter
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">List of tracks Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        [HttpGet("genrefilter")]
+        [ProducesResponseType(typeof(ResponseDTO<List<GenreGetAllTrackDTO>>), StatusCodes.Status200OK)]
+        [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+
+        public async Task<ActionResult<ResponseDTO<IEnumerable<GenreGetAllTrackDTO>>>> GetAllTracksFilterByGenre()
+        {
+            /*List<Expression<Func<Track, object>>> include = new List<Expression<Func<Track, object>>>
+            {
+                t => t.TrackArtists,
+                t => t.TrackGenres,
+                t => t.TrackArtists.Select(x => x.Artist),
+                t => t.TrackGenres.Select(x => x.Genre)
+            };*/
+            List<string> includes = new List<string> { "TrackArtists.Artist", "TrackGenres.Genre" };
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find tracks successfully!",
+                HttpStatusCode.OK,
+                await _genreRepository.getAllTracksFilterByGenre(_mapper)));
+        }
     }
 }

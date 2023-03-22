@@ -26,6 +26,8 @@ namespace BusinessObjects.Mapper
                 .ForMember(dto => dto.Track, act => act.MapFrom(obj => obj.Track))
                 .ForMember(dto => dto.Genre, act => act.MapFrom(obj => obj.Genre))
                 .ReverseMap();
+            CreateMap<TrackGetByGenreDTO, Track>().ReverseMap();
+            CreateMap<GenreGetAllTrackDTO, Genre>().ReverseMap();
         }
     }
 }
