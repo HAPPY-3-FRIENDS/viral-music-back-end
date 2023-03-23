@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DataTranferObjects;
+﻿using AutoMapper;
+using BusinessObjects.DataTranferObjects;
 using BusinessObjects.Models;
 using DataAccessObjects;
 using Repositories.IRepositories;
@@ -14,5 +15,8 @@ namespace Repositories.Repositories
     {
         public async Task<Track> GetByTrackDateTime(DateTime trackDateTime)
             => await TrackDAO.Instance.GetByTrackDateTime(trackDateTime);
+
+        public async Task<IEnumerable<TrackGetByGenreDTO>> GetTracksListByName(string name, IMapper mapper)
+            => await TrackDAO.Instance.GetTracksListByName(name, mapper);
     }
 }

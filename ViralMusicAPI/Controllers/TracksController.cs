@@ -108,6 +108,41 @@ namespace ViralMusicAPI.Controllers
         }
 
         /// <summary>
+        /// Get a specific Track by id.
+        /// </summary>
+        /// 
+        /// <param name="id">
+        /// Track's id which is needed for finding.
+        /// </param>
+        /// 
+        /// <returns>A specific Track by id.</returns>
+        /// 
+        /// <remarks>
+        /// Description: 
+        /// - Return a specific Track by id.
+        /// - Sample request: 
+        /// 
+        ///       GET /api/tracks/name/BaiGiDo
+        /// 
+        /// </remarks>
+        /// 
+        /// <response code="200">Successfully</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Track not found</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(ResponseDTO<IEnumerable<TrackGetByGenreDTO>>), 200)]
+        [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet("name/{name}")]
+        public async Task<ActionResult<ResponseDTO<IEnumerable<TrackGetByGenreDTO>>>> GetTracksListByName(string name)
+        {
+            return StatusCode((int)HttpStatusCode.OK, ResponseBuilderHandler.generateResponse(
+                "Find tracks successfully!",
+                HttpStatusCode.OK,
+                await _trackRepository.GetTracksListByName(name, _mapper)));
+        }
+
+        /// <summary>
         /// Update an existing Track.
         /// </summary>
         /// 

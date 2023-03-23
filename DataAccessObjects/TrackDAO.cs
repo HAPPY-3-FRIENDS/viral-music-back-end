@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Models;
+﻿using AutoMapper;
+using BusinessObjects.DataTranferObjects;
+using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,36 @@ namespace DataAccessObjects
                 throw new Exception(ex.Message);
             }
             return track;
+        }
+
+        public async Task<IEnumerable<TrackGetByGenreDTO>> GetTracksListByName(string name, IMapper mapper)
+        {
+            List<TrackGetByGenreDTO> allTracks = new List<TrackGetByGenreDTO>();
+            try
+            {
+                var dbContext = new ViralMusicContext();
+                IEnumerable<Track> tracks = new List<Track>();
+                tracks = await dbContext.Set<Track>().Where(u => u.Title.Contains(name)).ToArrayAsync();
+
+                foreach (var track in tracks)
+                {
+                    TrackGetByGenreDTO trueTrack = mapper.Map<TrackGetByGenreDTO>(track);
+                    trueTrack.Artists = new List<string>();
+                    IEnumerable<TrackArtist> trackArtists = await TrackArtistDAO.Instance.GetAllArtistOfTrackByTrackIdAsync(track.Id);
+                    foreach (var trackArtist in trackArtists)
+                    {
+                        Artist trueArtist = await ArtistDAO.Instance.GetByIdAsync(trackArtist.ArtistId);
+                        string artist = trueArtist.Name;
+                        trueTrack.Artists.Add(artist);
+                    }
+                    allTracks.Add(trueTrack);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return allTracks;
         }
     }
 }
