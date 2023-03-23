@@ -219,6 +219,10 @@ namespace ViralMusicAPI.Controllers
                 throw new BadRequestException("Playlist with name '" + playlistDTO.Name + "' is existed!");
 
             playlistDTO.Owner = username;
+            if (playlistDTO.Image == null || playlistDTO.Image.Length == 0)
+            {
+                playlistDTO.Image = "http://wordpress.wbur.org/wp-content/uploads/2021/12/GettyImages-1305025883-1000x667.jpg";
+            }
             await _playlistRepository.AddAsync(_mapper.Map<Playlist>(playlistDTO));
             Playlist createPlaylist = await _playlistRepository.GetByUsernameByName(username, playlistDTO.Name);
 
