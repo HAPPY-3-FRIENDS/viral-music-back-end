@@ -2,6 +2,8 @@
 
 :wave: Welcome to our Building Cross-Platform Back-End Application With .NET (PRN231) Project :wave:
 
+:point_right: [Live Demo Here](https://youtu.be/55RuJXYfV-M?si=5co0a_88qqrX6dg8) :point_left:
+
 ## Table of Contents
 - [Description](#description)
 - [Preview Screenshot](#preview-screenshot)
@@ -75,6 +77,7 @@
 3| -| [UI Design](https://www.figma.com/proto/HDnvo2txSBeXvzgSTHeUyj/PRN231---Viral-Music-Web?node-id=12-263&scaling=scale-down&page-id=0%3A1&starting-point-node-id=17%3A293&show-proto-sidebar=1) | UI design on Figma
 -| 3.1| [UI Design Screenshot](https://github.com/HAPPY-3-FRIENDS/viral-music-back-end/tree/main/UI) | UI Design Screenshot
 4| -| [Document Folder](https://github.com/HAPPY-3-FRIENDS/viral-music-back-end/tree/main/Requirement) | Document folder includes Requirement and Business Rules
+5| -| [Live Demo](https://youtu.be/55RuJXYfV-M?si=5co0a_88qqrX6dg8) | Live Demo
 
 ## Contributors
 **1. Mentors:**
