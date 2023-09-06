@@ -86,7 +86,7 @@
 **2. Members:**
 - [Nguyen Dao Duc Quan](https://github.com/dq-qiji) - SE151008 - **Leader | Business Analyst | Back-end Developer**
 - [Huynh Le Thuy Tien](https://github.com/tienhuynh-tn) - SE151104 - **Back-end Developer | Database Designer**
-- [Nguyen Lam Thuy Phuong](https://github.com/nguyenlamthuyphuong25) - 	SE150999 - **UI Designer | Front-end Developer | Back-end Developer**
+- [Nguyen Lam Thuy Phuong](https://github.com/nguyenlamthuyphuong25) - 	SE150999 - **UI Designer | Front-end Developer**
 
 ## References
 
